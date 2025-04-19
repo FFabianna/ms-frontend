@@ -17,6 +17,3 @@ spec:
           image: automationrepository.azurecr.io/frontend-image
           ports:
             - containerPort: 8080
-          env:
-          - name: ZIPKIN_URL
-            value: "http://zipkin:9411/api/v2/spans"
