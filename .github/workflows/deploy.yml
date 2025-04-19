@@ -26,8 +26,8 @@ jobs:
 
     - name: Build and push Docker images
       run: |
-        docker build -t $REGISTRY/frontend-image .
-        docker push $REGISTRY/frontend-image
+        docker build -t $REGISTRY/frontend-image:1.0.1 .
+        docker push $REGISTRY/frontend-image:1.0.1
     - name: Set AKS context
       uses: azure/aks-set-context@v3
       with:
