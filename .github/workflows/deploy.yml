@@ -1,4 +1,4 @@
-name: Deploy Fronted to AKS
+name: Deploy Frontend to AKS
 
 on:
   push:
@@ -16,6 +16,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Set image tag from commit SHA
+      run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
     - name: Azure login
       uses: azure/login@v1
       with:
@@ -26,17 +29,25 @@ jobs:
 
     - name: Build and push Docker images
       run: |
-        docker build -t $REGISTRY/frontend-image:1.0.1 .
-        docker push $REGISTRY/frontend-image:1.0.1
+        docker build -t $REGISTRY/frontend-image:${IMAGE_TAG} -t $REGISTRY/frontend-image:latest .
+        docker push $REGISTRY/frontend-image:${IMAGE_TAG}
+        docker push $REGISTRY/frontend-image:latest
+
     - name: Set AKS context
       uses: azure/aks-set-context@v3
       with:
         resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
         cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+
     - name: Deploy to AKS with kubectl
       run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
+
+    - name: Ensure latest image is deployed
+      run: |
+        kubectl set image deployment/frontend frontend=$REGISTRY/frontend-image:${IMAGE_TAG}
+
     - name: Get frontend LoadBalancer IP
       run: |
         echo "Waiting for LoadBalancer IP..."
