@@ -1,3 +1,7 @@
+#dokerfile para la aplicación frontend 
+# Usa Node.js 8.17.0 para instalar dependencias, compilar y servir la app
+# La imagen esta en DockerHub (vanesa155) y ACR para despliegue en AKS
+
 FROM node:8.17.0
 
 # Establecer el directorio de trabajo dentro del contenedor

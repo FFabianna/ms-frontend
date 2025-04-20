@@ -1,73 +1,73 @@
+
 # Frontend
 
-UI for sample distributed TODO application.
-
-## Configuration
-- `PORT` - a port the application binds to 
-- `AUTH_API_ADDRESS` - address of `auth-api` for authentication
-- `TODOS_API_ADDRESS` - address of `todos-api` for TODO CRUD
-
-## Building
-
-``` bash
-# install dependencies
-npm install
-
-# build application
-npm run build
-```
-
-## Running
-
-``` bash
-PORT=8080 AUTH_API_ADDRESS=http://127.0.0.1:8000 TODOS_API_ADDRESS=http://127.0.0.1:8082 npm start
-```
-
-## Dependencies
-Here you can find the software required to run this microservice, as well as the version we have tested. 
-|  Dependency | Version  |
-|-------------|----------|
-| Node        | 8.17.0   |
-| NPM         | 6.13.4   |
-
-
-
-# Documentación de Cambios – Microservicio `ms-frontend`
-
-## 🐳 Contenerización
-
-Se creó un Dockerfile que permite construir una imagen del frontend del microservicio utilizando una imagen base de Node.js. El proceso instala dependencias, compila la aplicación y la prepara para ejecutarse sobre el puerto 8080.
-
-También se definieron variables de entorno necesarias para permitir la comunicación con otros microservicios como `authapi` y `todosapi`.
+This is the frontend microservice of a distributed TODO application built with a microservices architecture. It provides the user interface (UI) that interacts with the backend APIs responsible for authentication and task management.
 
 ---
 
-## ☸️ Despliegue en Kubernetes
+## 🔗 Project Links
 
-Se añadieron dos archivos de manifiesto para Kubernetes:
+- 📋 [Trello Board](https://trello.com/invite/b/680296aa17864e87fc6c7fed/ATTI82505e108ae3e7a005ede0081ec437f87CDDDEF1/microservice)
+- 📄 [Project Documentation](https://docs.google.com/document/d/1FER2lpkZJk2eI5tpMnMy8mFhd42g3f4jioasHwZ0klo/edit?usp=sharing)
 
-- **Deployment:** define el despliegue del microservicio `frontend`, especificando el uso de una imagen almacenada en Azure Container Registry y exponiendo el puerto de la aplicación.
+## Architecture & Deployment
 
-- **Service:** permite exponer el microservicio al exterior del clúster mediante un `LoadBalancer`, redirigiendo tráfico del puerto 80 al puerto interno del contenedor.
+This service is containerized with Docker and deployed to Azure Kubernetes Service (AKS). The image is built and published automatically via GitHub Actions and deployed using Kubernetes manifests.
 
----
+Environment variables like `AUTH_API_ADDRESS` and `TODOS_API_ADDRESS` are defined to allow communication with the corresponding APIs.
 
-## 🔁 Automatización CI/CD con GitHub Actions
+## 📦 Dependencies
 
-Se integró un flujo CI/CD que se ejecuta automáticamente al hacer *push* en la rama `main`. Este flujo realiza lo siguiente:
+This project uses the following versions for development and production:
 
-1. Autenticación en Azure y en el registro de contenedores.
-2. Construcción de la imagen Docker del frontend.
-3. Publicación de la imagen en Azure Container Registry con tags `latest` y el hash del commit.
-4. Aplicación de los manifiestos de Kubernetes para actualizar el despliegue.
-5. Reasignación de la imagen actualizada al Deployment.
-6. Obtención automática de la IP pública asignada por el servicio LoadBalancer.
-
-Esto permite realizar despliegues consistentes, automáticos y trazables.
+| Dependency | Version |
+|------------|---------|
+| Node.js    | 8.17.0  |
+| NPM        | 6.13.4  |
 
 ---
 
-## 📣 Notificación en Slack
+# 🛠️ What Was Added – `ms-frontend` Microservice
 
-Se incorporó un flujo adicional que notifica al canal de Slack cada vez que se detecta un *push* a la rama `main`. Esta notificación informa al equipo que se han realizado cambios en el repositorio del microservicio `ms-frontend`.
+## 🐳 Containerization
 
+A Dockerfile was created to build a container image for the frontend service using a Node.js base image. This process installs dependencies, builds the application, and exposes port 8080 for incoming requests.
+
+Environment variables were also defined to enable proper communication with other microservices (`auth-api` and `todos-api`).
+
+---
+
+## ☸️ Kubernetes Deployment
+
+Two Kubernetes manifests were added:
+
+- **Deployment:** Configures how the frontend is deployed in the cluster, specifying the use of a container image hosted in Azure Container Registry.
+- **Service:** Exposes the deployment externally via a `LoadBalancer`, redirecting public traffic from port 80 to the internal container port 8080.
+
+---
+
+## 🔁 CI/CD Automation with GitHub Actions
+
+A GitHub Actions workflow was integrated to automate the build and deployment process when code is pushed to the `main` branch. The workflow performs the following:
+
+1. Logs into Azure and the container registry.
+2. Builds the Docker image for the frontend.
+3. Pushes the image to Azure Container Registry with `latest` and commit hash tags.
+4. Applies the Kubernetes manifests.
+5. Updates the deployment with the new image version.
+6. Retrieves the public IP assigned by the LoadBalancer.
+
+This ensures reliable, traceable, and automated deployments.
+
+---
+
+## 📣 Slack Notification
+
+An additional GitHub Actions workflow was included to send a Slack notification to a specific channel whenever a push to the `main` branch is detected. This helps the team stay informed about repository changes in real time.
+
+## <b> Made by </b>
+
++ [Fabiana Valderruten](https://github.com/FFabianna "FFabianna")
++ [Gloria Vicuña](https://github.com/Vanesa155 "Vanesa V.")
+
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
