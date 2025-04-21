@@ -7,7 +7,7 @@
                 <div class='row'>
                     <div class='col-md-3'></div>
                     <div class='col-md-6'>
-                        <h2>Welcome! Please Login</h2>
+                        <h2>Welcome! Please Login Holi</h2>
                         <hr>
                     </div>
                 </div>
