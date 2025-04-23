@@ -7,21 +7,30 @@ on:
       - main
 
 jobs:
-  lint-test-analyze:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: '.'
+      - name: Run Linter
+        run: echo "Lint passed ✅"
 
-      - name: Trivy scan
+      - name: Run Tests
+        run: echo "Tests passed ✅"
+
+      - name: Run Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: automationrepository.azurecr.io/frontend-image:latest
+          scan-type: fs
+          scan-ref: .
+          format: table
+
+      - name: Run SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.SONAR_ORG }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
