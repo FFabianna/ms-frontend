@@ -1,4 +1,4 @@
- # 🛡️ security.yml - OWASP ZAP
+# 🛡️ security.yml - OWASP ZAP
 name: Security Scan
 
 on:
@@ -12,11 +12,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run OWASP ZAP Baseline Scan
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get IP address of frontend-service
         run: |
           kubectl get svc frontend-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' > ip.txt
+          cat ip.txt
+          
+      - name: Run OWASP ZAP Baseline Scan
+        run: |
           IP=$(cat ip.txt)
           docker run -t owasp/zap2docker-stable zap-baseline.py -t http://$IP -r zap_report.html
+
+      - name: Check if ZAP report exists
+        run: |
+          if [ ! -f zap_report.html ]; then
+            echo "ZAP report not found!"
+            exit 1
+          fi
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v3
