@@ -14,12 +14,11 @@ jobs:
     steps:
       - name: Run OWASP ZAP Baseline Scan
         run: |
-          kubectl get svc frontend-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' > ip.txt
-          IP=$(cat ip.txt)
-          docker run -t owasp/zap2docker-stable zap-baseline.py -t http://$IP -r zap_report.html
+          echo "Usando IP fija: http://51.8.61.254"
+          docker run -t owasp/zap2docker-stable zap-baseline.py -t http://51.8.61.254 -r zap_report.html
 
       - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4  # Usando una versión específica
+        uses: actions/upload-artifact@v4
         with:
           name: zap-report
           path: zap_report.html
