@@ -10,6 +10,12 @@ This is the frontend microservice of a distributed TODO application built with a
 - 📋 [Trello Board](https://trello.com/invite/b/680296aa17864e87fc6c7fed/ATTI82505e108ae3e7a005ede0081ec437f87CDDDEF1/microservice)
 - 📄 [Project Documentation](https://docs.google.com/document/d/1FER2lpkZJk2eI5tpMnMy8mFhd42g3f4jioasHwZ0klo/edit?usp=sharing)
 
+## 🌐 Live Access
+
+-  [Frontend Web Application](http://51.8.61.254)
+- [Zipkin Distributed Tracing](http://135.234.184.116:9411)
+
+
 ## Architecture & Deployment
 
 This service is containerized with Docker and deployed to Azure Kubernetes Service (AKS). The image is built and published automatically via GitHub Actions and deployed using Kubernetes manifests.
@@ -64,6 +70,23 @@ This ensures reliable, traceable, and automated deployments.
 ## 📣 Slack Notification
 
 An additional GitHub Actions workflow was included to send a Slack notification to a specific channel whenever a push to the `main` branch is detected. This helps the team stay informed about repository changes in real time.
+
+## Security & Code Quality
+To ensure the reliability and security of the frontend microservice, we integrated automated tools into our CI/CD pipeline:
+
+### 🔍 Trivy – Vulnerability Scanner
+Usage: Scans Docker images for OS packages and application dependencies for known vulnerabilities (CVEs).
+
+Pipeline Integration: Runs after the Docker image is built but before pushing to ACR.
+
+Outcome: Blocks deployments that contain critical vulnerabilities.
+
+### ✅ SonarCloud – Code Quality Analysis
+Usage: Performs static code analysis to detect bugs, code smells, and security hotspots.
+
+Pipeline Integration: Triggered on each pull request and push to main branch.
+
+Outcome: Enforces quality gates. Builds fail if code quality thresholds are not met.
 
 ## <b> Made by </b>
 
