@@ -1,31 +1,33 @@
-name: ZAP Baseline Scan
+name: Security Scan
 
 on:
   workflow_run:
-    workflows: ["CD Pipeline"]
+    workflows: ["CD Pipeline"]  # Asegúrate de que este nombre coincida exactamente
     types:
       - completed
 
-
 permissions:
   contents: read
-  issues: write  # Necesario para que la acción pueda crear issues en el repo
+  actions: write
 
 jobs:
-  zap_scan:
+  zap-scan:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    name: Run ZAP Baseline Scan
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
 
-      - name: Run ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
+      - name: Escaneo ZAP en producción
+        uses: zaproxy/action-full-scan@v0.7.0
         with:
-          target: 'http://51.8.61.254'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue_title: 'ZAP Scan Baseline Report'
-          allow_issue_writing: true
-          artifact_name: 'zap_scan_report'
-          cmd_options: '-J report_json.json -w report_md.md -r report_html.html'
+          target: 'https://produccion.tusitio.com'  # Cambia esto por la URL real de tu entorno en producción
+          fail_action: false  # true si quieres que falle el job si encuentra vulnerabilidades
+          cmd_options: '-a'   # Escaneo activo
+
+      - name: Subir reporte de ZAP
+        uses: actions/upload-artifact@v4
+        with:
+          name: reportezap
+          path: report_html.html  # ZAP genera este archivo por defecto
