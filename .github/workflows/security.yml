@@ -1,0 +1,25 @@
+ # 🛡️ security.yml - OWASP ZAP
+name: Security Scan
+
+on:
+  workflow_run:
+    workflows: ["CD Pipeline"]
+    types:
+      - completed
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run OWASP ZAP Baseline Scan
+        run: |
+          kubectl get svc frontend-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' > ip.txt
+          IP=$(cat ip.txt)
+          docker run -t owasp/zap2docker-stable zap-baseline.py -t http://$IP -r zap_report.html
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-report
+          path: zap_report.html
