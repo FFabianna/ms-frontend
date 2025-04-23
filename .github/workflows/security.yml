@@ -21,6 +21,9 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
+      - name: Crear directorio para reportes
+        run: mkdir -p zap/wrk
+
       - name: Escaneo ZAP en producción
         uses: zaproxy/action-full-scan@v0.7.0
         with:
@@ -28,8 +31,13 @@ jobs:
           fail_action: false  # true si quieres que falle el job si encuentra vulnerabilidades
           cmd_options: '-a'   # Escaneo activo
 
+      - name: Verificar archivos generados
+        run: |
+          echo "Archivos generados por ZAP:"
+          ls -R zap/wrk/
+
       - name: Subir reporte de ZAP
         uses: actions/upload-artifact@v4
         with:
           name: reportezap
-          path: report_html.html  # ZAP genera este archivo por defecto
+          path: zap/wrk/*  # Ajusta si es necesario dependiendo de la ruta generada
