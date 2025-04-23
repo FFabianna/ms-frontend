@@ -22,7 +22,7 @@ jobs:
       - name: Escaneo ZAP en producción
         uses: zaproxy/action-full-scan@v0.7.0
         with:
-          target: 'https://produccion.tusitio.com'  # Cambia esto por la URL real de tu entorno en producción
+          target: 'http://51.8.61.254/'  # Cambia esto por la URL real de tu entorno en producción
           fail_action: false  # true si quieres que falle el job si encuentra vulnerabilidades
           cmd_options: '-a'   # Escaneo activo
 
