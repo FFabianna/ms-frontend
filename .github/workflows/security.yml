@@ -2,7 +2,7 @@ name: Security Scan
 
 on:
   workflow_run:
-    workflows: ["CD Pipeline"]  # Asegúrate de que este nombre coincida exactamente
+    workflows: ["CD Pipeline"]  # Asegúrate de que este nombre coincida exactamente porfa
     types:
       - completed
 
