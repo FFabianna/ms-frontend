@@ -1,9 +1,11 @@
 name: ZAP Baseline Scan
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["CD Pipeline"]
+    types:
+      - completed
+
 
 permissions:
   contents: read
@@ -25,5 +27,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue_title: 'ZAP Scan Baseline Report'
           allow_issue_writing: true
-          artifact_name: 'zap-scan-report'
+          artifact_name: 'zap_scan_report'
           cmd_options: '-J report_json.json -w report_md.md -r report_html.html'
