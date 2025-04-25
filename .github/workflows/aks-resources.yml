@@ -1,0 +1,55 @@
+name: Ver Recursos AKS
+
+on:
+  workflow_dispatch: # lo lanzas manualmente desde GitHub
+
+jobs:
+  listar-recursos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login en Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Obtener credenciales de AKS
+        run: |
+          az aks get-credentials \
+            --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} \
+            --name ${{ secrets.AKS_CLUSTER_NAME }} \
+            --overwrite-existing
+
+      - name: Mostrar estado del Deployment
+        run: |
+          echo "📦 DEPLOYMENT frontend:"
+          kubectl get deployment frontend -o wide
+          kubectl get pods -l app=frontend
+
+      - name: Mostrar recursos del contenedor
+        run: |
+          echo "📊 RECURSOS DEL CONTENEDOR:"
+          kubectl get deployment frontend -o yaml | grep -A5 resources
+
+      - name: Ver HorizontalPodAutoscaler
+        run: |
+          echo "📈 HPA:"
+          kubectl get hpa
+          kubectl describe hpa frontend-hpa || echo "❌ HPA no encontrado"
+
+      - name: Ver LimitRange
+        run: |
+          echo "📐 LIMITRANGE:"
+          kubectl get limitrange
+          kubectl describe limitrange cpu-defaults || echo "❌ LimitRange no encontrado"
+
+      - name: Ver ResourceQuota
+        run: |
+          echo "🧱 RESOURCEQUOTA:"
+          kubectl get resourcequota
+          kubectl describe resourcequota frontend-quota || echo "❌ ResourceQuota no encontrado"
+
+      - name: Mostrar todos los recursos del namespace
+        run: |
+          echo "📋 TODOS LOS RECURSOS:"
+          kubectl get all
