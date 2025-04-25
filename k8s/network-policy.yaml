@@ -17,6 +17,13 @@ spec:
     ports:
     - protocol: TCP
       port: 8080
+  - from:
+    - podSelector:
+        matchLabels:
+          app: todosapi  # Permitir tráfico entrante desde todosapi
+    ports:
+    - protocol: TCP
+      port: 8082  # Permitir tráfico en puerto 8088888
   egress:
   - to:
     - podSelector:
