@@ -44,6 +44,9 @@ jobs:
         run: |
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/hpa.yaml
+          kubectl apply -f k8s/limitrange.yaml
+          kubectl apply -f k8s/resourcequota.yaml
           kubectl set image deployment/frontend frontend=$REGISTRY/frontend-image:${IMAGE_TAG}
 
       - name: Get frontend LoadBalancer IP
