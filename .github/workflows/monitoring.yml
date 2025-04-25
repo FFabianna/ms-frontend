@@ -40,5 +40,14 @@ jobs:
       - name: Save logs
         run: |
           kubectl describe hpa frontend-hpa > hpa-status.log
-          kubectl top pods > pod-usage.log
+          kubectl top pods --namespace=default > pod-usage.log
           kubectl top nodes > node-usage.log
+
+      - name: Upload logs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8s-monitoring-logs
+          path: |
+            hpa-status.log
+            pod-usage.log
+            node-usage.log
