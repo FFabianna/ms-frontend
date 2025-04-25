@@ -1,7 +1,7 @@
 name: Monitor Kubernetes Resources
 
 on:
-  workflow_dispatch:  # para ejecutarlo manualmente
+  workflow_dispatch:  # ejecutable manualmente
 
 jobs:
   monitor:
@@ -20,7 +20,11 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Set AKS context
-        run: az aks get-credentials --name ${{ secrets.AKS_NAME }} --resource-group ${{ secrets.AKS_RG }}
+        run: |
+          az aks get-credentials \
+            --name ${{ secrets.AKS_CLUSTER_NAME }} \
+            --resource-group ${{ secrets.AKS_RESOURCE_GROUP }} \
+            --overwrite-existing
 
       - name: Get current resource usage from pods
         run: |
@@ -40,14 +44,5 @@ jobs:
       - name: Save logs
         run: |
           kubectl describe hpa frontend-hpa > hpa-status.log
-          kubectl top pods --namespace=default > pod-usage.log
+          kubectl top pods > pod-usage.log
           kubectl top nodes > node-usage.log
-
-      - name: Upload logs as artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: k8s-monitoring-logs
-          path: |
-            hpa-status.log
-            pod-usage.log
-            node-usage.log
