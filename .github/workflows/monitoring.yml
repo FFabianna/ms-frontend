@@ -1,0 +1,44 @@
+name: Monitor Kubernetes Resources
+
+on:
+  workflow_dispatch:  # para ejecutarlo manualmente
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        run: az aks get-credentials --name ${{ secrets.AKS_NAME }} --resource-group ${{ secrets.AKS_RG }}
+
+      - name: Get current resource usage from pods
+        run: |
+          echo "== Resource usage by pod =="
+          kubectl top pods --namespace=default
+
+      - name: Get node usage
+        run: |
+          echo "== Node usage =="
+          kubectl top nodes
+
+      - name: Dump HPA status
+        run: |
+          echo "== HPA Status =="
+          kubectl get hpa frontend-hpa -o yaml
+
+      - name: Save logs
+        run: |
+          kubectl describe hpa frontend-hpa > hpa-status.log
+          kubectl top pods > pod-usage.log
+          kubectl top nodes > node-usage.log
